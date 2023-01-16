@@ -4,8 +4,8 @@ import (
 	"log"
 
 	telegram "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"github.com/nomadphone/lib/database"
 	"github.com/nomadphone/lib/models"
-	"github.com/nomadphone/telegram-bot/database"
 	"github.com/nomadphone/telegram-bot/phonenumbers"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
