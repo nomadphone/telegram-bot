@@ -1,0 +1,33 @@
+name: deploy
+on:
+  workflow_run:
+    workflows: ["build"]
+    branches: [main]
+    types: 
+      - completed
+  
+env:
+  IMAGE_URL: us-docker.pkg.dev/nomadphone/telegram-bot/telegram-bot
+  IMAGE_TAG: ${{ github.sha }}
+
+jobs:
+  deploy-to-cloud-run:
+    name: deploy to cloud run
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write 
+    steps:
+      - name: check out code
+        uses: actions/checkout@v2
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v1'
+        with:
+          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+
+      - id: 'deploy'
+        uses: 'google-github-actions/deploy-cloudrun@v1'
+        with:
+          service: 'telegram-bot'
+          image: ${{ env.IMAGE_URL }}:${{ env.IMAGE_TAG }}
+      
