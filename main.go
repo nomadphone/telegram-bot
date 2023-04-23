@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"net/http"
 	"os"
 
 	telegram "github.com/go-telegram-bot-api/telegram-bot-api/v5"
@@ -17,10 +19,22 @@ func runTelegramBot() {
 	bot.Debug = true
 	log.Printf("Authorized on account %s", bot.Self.UserName)
 
-	u := telegram.NewUpdate(0)
-	u.Timeout = 60
+	info, err := bot.GetWebhookInfo()
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	updates := bot.GetUpdatesChan(u)
+	if info.LastErrorDate != 0 {
+		log.Printf("Telegram callback failed: %s", info.LastErrorMessage)
+	}
+
+	updates := bot.ListenForWebhook("/" + bot.Token)
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "3000"
+	}
+	fmt.Println("Listening on port", port)
+	go http.ListenAndServe(fmt.Sprintf(":%s", port), nil)
 
 	for update := range updates {
 		if update.Message != nil { // If we got a message
@@ -42,6 +56,7 @@ func runTelegramBot() {
 			bot.Send(msg)
 		}
 	}
+
 }
 
 func main() {
