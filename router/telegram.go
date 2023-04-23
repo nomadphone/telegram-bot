@@ -5,7 +5,7 @@ import (
 	"os"
 
 	telegram "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"github.com/nomadphone/telegram-bot/users"
+	"github.com/nomadphone/lib/models"
 )
 
 type TelegramMessageRouter struct {
@@ -23,7 +23,7 @@ func NewTelegramMessageRouter() TelegramMessageRouter {
 	return TelegramMessageRouter{api: bot}
 }
 
-func (t TelegramMessageRouter) RouteMessage(incomingPhone string, user users.User, body string) {
+func (t TelegramMessageRouter) RouteMessage(incomingPhone string, user models.User, body string) {
 	log.Printf("Redirecting message with body: %s to telegram user: %s", body, user.TelegramUsername)
 	body = "Heyoo!\nYou have a new message from " + incomingPhone + "\n\n-----\n" + body
 	message := telegram.NewMessage(user.TelegramChatID, body)
