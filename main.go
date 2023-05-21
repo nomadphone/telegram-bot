@@ -19,6 +19,11 @@ func runTelegramBot() {
 	bot.Debug = true
 	log.Printf("Authorized on account %s", bot.Self.UserName)
 
+	_, err = bot.GetWebhookInfo()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	updates := bot.ListenForWebhook("/" + bot.Token)
 	port := os.Getenv("PORT")
 	if port == "" {
